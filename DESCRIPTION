@@ -1,0 +1,12 @@
+Package: WrightFisher
+Title: What the Package Does (one line, title case)
+Version: 0.0.0.9000
+Authors@R: person("Washburne", "Alex", email = "bigalculus@gmail.com", role = c("cre"))
+Description: Simulate Wright-Fisher Process and volatility-stabilized market models, and perform CVT-test of neutrality (Washburne et al. 2016)
+Depends:
+    R (>= 3.2.2),
+    lmtest (>= 0.9.34),
+    parallel (>= 3.2.2)
+License: What license is it under?
+LazyData: true
+RoxygenNote: 5.0.1

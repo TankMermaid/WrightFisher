@@ -12,20 +12,23 @@
 #' 
 #' set.seed(2)
 #' 
-#' #this takes ~20-0 seconds
+#' #this may take ~20-30 seconds
 #' wfp <- WFP(nSpecies=15,lambda=25)
 #' 
 #' t <- wfp[[1]]
 #' R <- wfp[[2]]
 #' 
-#' par(mfrow=c(1,2))
+#' par(mfrow=c(1,3))
 #' stackpoly(R,stack=T,main='Community Dynamics',xlab='time',ylab='Abundance')
 #' 
 #' #This will take ~10 seconds
-#' Pvals <- CVTest(1000,R,regress='time')
+#' Pvalsf <- CVTest(1000,R)
+#' Pvalst <- CVTest(1000,R,regress='time')
 #' 
-#' plot(ecdf(Pvals),xlab='P',ylab='#',main='Washburne Test P-value histogram')
+#' plot(ecdf(Pvalsf),xlab='P',ylab='#',main='P-values from regress="f"')
 #' lines(c(0,1),c(0,1),lwd=4,col='blue')
+#' 
+#' plot(ecdf(Pvalst),xlab='P',ylab='#',main='P-values from regress="time"')
 #' 
 #' #Uncorrected KS test
 #' ks <- ks.test(Pvals,runif(length(Pvals)))

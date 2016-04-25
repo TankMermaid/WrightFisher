@@ -31,9 +31,11 @@
 #' plot(ecdf(Pvalst),xlab='P',ylab='#',main='P-values from regress="time"')
 #' lines(c(0,1),c(0,1),lwd=4,col='blue')
 #' 
-#' #Uncorrected KS test
-#' ks <- ks.test(Pvalsf,runif(length(Pvals)))
+#' #Uncorrected KS test - the P-value from the KS-test gives a comparable estimate of the incompatibility of the simulation with a WFP
+#' ks <- ks.test(Pvalsf,runif(length(Pvalsf)))
 #' ks$p.value
+#' 
+#' 
 CVTest <- function(ntests,R,regress='f',formula=NULL,varformula=NULL,tm=NULL,...){
   
   if (!(regress %in% c('f','time'))){stop('unknown inputt "regress" - must be either "f" or "time"')}

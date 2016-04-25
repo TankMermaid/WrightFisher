@@ -4,7 +4,8 @@
 \alias{CVTest}
 \title{Constant Volatility Test for WFP}
 \usage{
-CVTest(ntests, R, regress = "f", formula = NULL, varformula = NULL, ...)
+CVTest(ntests, R, regress = "f", formula = NULL, varformula = NULL,
+  tm = NULL, ...)
 }
 \arguments{
 \item{ntests}{Positive integer - number of randomly selected constant-volatility transformations (CVTs) for heteroskedasticity testing}
@@ -13,7 +14,9 @@ CVTest(ntests, R, regress = "f", formula = NULL, varformula = NULL, ...)
 
 \item{regress}{Either "f" or "t" - whether regrssion should be performed on the state of the CVT or on the time.}
 
-\item{formula}{Formula for regression of the jumps in CVTs vs time or state of cvts. Should be in form "DF ~ f" or "DF ~ tm + I(tm^2)" etc. Default is quadratic regression}
+\item{formula}{Formula for regression of the jumps in CVTs vs time or state of cvts. Should be in form "DF ~ f" or "DF ~ tm + I(tm^2)" or  etc. Default is quadratic regression}
+
+\item{tm}{Input vector of timpoints to be used if \code{regress}='time'}
 
 \item{varformla}{Input argument for \code{bptest}. Default is quadratic regression.}
 }
@@ -28,23 +31,26 @@ library(plotrix)
 
 set.seed(2)
 
-#this takes ~20-0 seconds
+#this may take ~20-30 seconds
 wfp <- WFP(nSpecies=15,lambda=25)
 
 t <- wfp[[1]]
 R <- wfp[[2]]
 
-par(mfrow=c(1,2))
+par(mfrow=c(1,3))
 stackpoly(R,stack=T,main='Community Dynamics',xlab='time',ylab='Abundance')
 
-#This will take ~10 seconds
-Pvals <- CVTest(1000,R)
+Pvalsf <- CVTest(100,R)
+Pvalst <- CVTest(100,R,regress='time')
 
-plot(ecdf(Pvals),xlab='P',ylab='#',main='Washburne Test P-value histogram')
+plot(ecdf(Pvalsf),xlab='P',ylab='#',main='P-values from regress="f"')
+lines(c(0,1),c(0,1),lwd=4,col='blue')
+
+plot(ecdf(Pvalst),xlab='P',ylab='#',main='P-values from regress="time"')
 lines(c(0,1),c(0,1),lwd=4,col='blue')
 
 #Uncorrected KS test
-ks <- ks.test(Pvals,runif(length(Pvals)))
+ks <- ks.test(Pvalsf,runif(length(Pvals)))
 ks$p.value
 }
 

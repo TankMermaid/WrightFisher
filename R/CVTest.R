@@ -32,7 +32,7 @@
 #' lines(c(0,1),c(0,1),lwd=4,col='blue')
 #' 
 #' #Uncorrected KS test
-#' ks <- ks.test(Pvals,runif(length(Pvals)))
+#' ks <- ks.test(Pvalsf,runif(length(Pvals)))
 #' ks$p.value
 CVTest <- function(ntests,R,regress='f',formula=NULL,varformula=NULL,tm=NULL,...){
   

@@ -4,8 +4,8 @@
 #' @param ntests Positive integer - number of randomly selected constant-volatility transformations (CVTs) for heteroskedasticity testing
 #' @param R Compositional matrix - columns must be species and rows timepoints.
 #' @param regress Either "f" or "t" - whether regrssion should be performed on the state of the CVT or on the time.
-#' @param formula Formula for regression of the jumps in CVTs vs time or state of cvts. Should be in form "DF ~ f" or "DF ~ tm + I(tm^2)" etc.
-#' @param varformla Input argument for \code{bptest}
+#' @param formula Formula for regression of the jumps in CVTs vs time or state of cvts. Should be in form "DF ~ f" or "DF ~ tm + I(tm^2)" etc. Default is quadratic regression
+#' @param varformla Input argument for \code{bptest}. Default is quadratic regression.
 #' @return vector of p-values from Bruesh-Pagan heteroskedasticity tests.
 #' @examples
 #' library(plotrix)
@@ -22,7 +22,7 @@
 #' stackpoly(R,stack=T,main='Community Dynamics',xlab='time',ylab='Abundance')
 #' 
 #' #This will take ~10 seconds
-#' Pvals <- CVTest(1000,R)
+#' Pvals <- CVTest(1000,R,regress='time')
 #' 
 #' plot(ecdf(Pvals),xlab='P',ylab='#',main='Washburne Test P-value histogram')
 #' lines(c(0,1),c(0,1),lwd=4,col='blue')
@@ -65,7 +65,7 @@ CVTest <- function(ntests,R,regress='f',formula=NULL,varformula=NULL,...){
       DF <- model$residuals^2
       b[[nn]] <- glm(varformula)$coefficients
     } else {
-      tm <- 1:m
+      tm <- 1:(dim(R)[1]-1)
       dataset=model.frame(formula,environment())
       model <- lm(formula,dataset)
       # p[nn] <- bptest(model,varformula)$p.value

@@ -13,9 +13,9 @@ CVTest(ntests, R, regress = "f", formula = NULL, varformula = NULL, ...)
 
 \item{regress}{Either "f" or "t" - whether regrssion should be performed on the state of the CVT or on the time.}
 
-\item{formula}{Formula for regression of the jumps in CVTs vs time or state of cvts. Should be in form "DF ~ f" or "DF ~ tm + I(tm^2)" etc.}
+\item{formula}{Formula for regression of the jumps in CVTs vs time or state of cvts. Should be in form "DF ~ f" or "DF ~ tm + I(tm^2)" etc. Default is quadratic regression}
 
-\item{varformla}{Input argument for \code{bptest}}
+\item{varformla}{Input argument for \code{bptest}. Default is quadratic regression.}
 }
 \value{
 vector of p-values from Bruesh-Pagan heteroskedasticity tests.

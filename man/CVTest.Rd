@@ -49,8 +49,10 @@ lines(c(0,1),c(0,1),lwd=4,col='blue')
 plot(ecdf(Pvalst),xlab='P',ylab='#',main='P-values from regress="time"')
 lines(c(0,1),c(0,1),lwd=4,col='blue')
 
-#Uncorrected KS test
-ks <- ks.test(Pvalsf,runif(length(Pvals)))
+#Uncorrected KS test - the P-value from the KS-test gives a comparable estimate of the incompatibility of the simulation with a WFP
+ks <- ks.test(Pvalsf,runif(length(Pvalsf)))
 ks$p.value
+
+
 }
 

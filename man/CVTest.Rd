@@ -57,4 +57,7 @@ ks$p.value
 ks.test(Pvalst,runif(length(Pvalst)))$p.value
 
 }
+\references{
+http://biorxiv.org/content/early/2016/03/18/044495
+}
 

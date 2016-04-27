@@ -36,4 +36,7 @@ time <- X[[1]]
 X <- X[[2]]
 stackpoly(X,stack=T)
 }
+\references{
+https://www.academia.edu/15517160/PhD_Thesis_-_Competition_and_Coexistence_in_an_Unpredictable_World
+}
 

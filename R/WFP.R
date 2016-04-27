@@ -8,6 +8,7 @@
 #' @param Tmax Size of time window of numerical integration
 #' @param sample Number of timepoints between 0 and T to sample. Output will be a matrix with nrow=length(rho) and ncol=sample
 #' @export
+#' @references https://www.academia.edu/15517160/PhD_Thesis_-_Competition_and_Coexistence_in_an_Unpredictable_World
 #' @return Outputs a two-element list. The first element is the time vector for the time of samples, and the second element is the matrix of the fluctuating community.
 #' @examples 
 #' library(plotrix)

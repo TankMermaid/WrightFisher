@@ -8,6 +8,7 @@
 #' @param varformla Input argument for \code{bptest}. Default is quadratic regression.
 #' @param tm Input vector of timpoints to be used if \code{regress}='time'
 #' @return vector of p-values from Bruesh-Pagan heteroskedasticity tests.
+#' @references http://biorxiv.org/content/early/2016/03/18/044495
 #' @examples
 #' library(plotrix)
 #' library(WrightFisher)

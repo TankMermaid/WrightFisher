@@ -10,6 +10,7 @@
 #' @return vector of p-values from Bruesh-Pagan heteroskedasticity tests.
 #' @examples
 #' library(plotrix)
+#' library(WrightFisher)
 #' 
 #' set.seed(2)
 #' 
@@ -34,7 +35,8 @@
 #' #Uncorrected KS test - the P-value from the KS-test gives a comparable estimate of the incompatibility of the simulation with a WFP
 #' ks <- ks.test(Pvalsf,runif(length(Pvalsf)))
 #' ks$p.value
-#' 
+#'
+#' ks.test(Pvalst,runif(length(Pvalst)))$p.value
 #' 
 CVTest <- function(ntests,R,regress='f',formula=NULL,varformula=NULL,tm=NULL,...){
   

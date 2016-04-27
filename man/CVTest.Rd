@@ -28,6 +28,7 @@ Constant Volatility Test for WFP
 }
 \examples{
 library(plotrix)
+library(WrightFisher)
 
 set.seed(2)
 
@@ -53,6 +54,7 @@ lines(c(0,1),c(0,1),lwd=4,col='blue')
 ks <- ks.test(Pvalsf,runif(length(Pvalsf)))
 ks$p.value
 
+ks.test(Pvalst,runif(length(Pvalst)))$p.value
 
 }
 

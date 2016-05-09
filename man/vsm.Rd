@@ -4,13 +4,17 @@
 \alias{vsm}
 \title{Simulate volatility-stabilized market model}
 \usage{
-vsm(n = 2, delta = 0.1, dt = 1e-05, Tmax = 1, X0 = NULL,
-  tol = 1e-16, rho = 0, samples = 1000)
+vsm(n = 2, delta = NULL, lambda = NULL, rho = NULL, fs = NULL,
+  dt = 1e-05, Tmax = 1, X0 = NULL, tol = 1e-16, nsamples = 1000)
 }
 \arguments{
 \item{n}{Number of companies in market}
 
 \item{delta}{Growth rate of market}
+
+\item{lambda}{Alternative parameterization via underlying Wright-Fisher Process}
+
+\item{rho}{Alternative parameterization via underlying Wright-Fisher Process}
 
 \item{dt}{Size of timestep in numerical integration}
 
@@ -19,8 +23,6 @@ vsm(n = 2, delta = 0.1, dt = 1e-05, Tmax = 1, X0 = NULL,
 \item{X0}{initial community size, default is rlnorm(n)}
 
 \item{tol}{Tolerance - reflecting wall close to zero to prevent negative values}
-
-\item{rho}{Mean to which market model reverts. Default is 0}
 }
 \value{
 Two member list. First element is time vector. Second element is matrix whose columns are companies in the market and whose rows are timepoints
@@ -29,41 +31,47 @@ Two member list. First element is time vector. Second element is matrix whose co
 Simulate volatility-stabilized market model
 }
 \examples{
+library(plotrix)
 set.seed(1)
 X0=rmultinom(1,size=200,prob=rep(1,5))
-X <- vsm(5,Tmax=1,rho=1e3,samples=5e3,dt=1e-4,X0=X0)
+X <- vsm(5,Tmax=1,nsamples=5e3,dt=1e-4,X0=X0)
 tms <- X$time
 X <- X$Market
 R <- X/rowSums(X)
-par(mfrow=c(1,2))
+par(mfrow=c(2,1))
 stackpoly(X,stack=T,main='Market Dynamics',ylim=c(0,350))
 stackpoly(R,stack=T,main='Market Shares')
 
 
 ### now let's see how the variance scales with the mean
-set.seed(2)
 n=50
-X0 <- rmultinom(1,size=250,prob=rep(1,n))
+lambda=1
+fs <- function(S) S
+X0 <- rlnorm(50)
 #the step below takes ~10s
-X <- vsm(50,Tmax=10,delta=-3e-2,samples=5e3,X0=X0,dt=1e-4)
+X <- vsm(n,lambda=lambda,Tmax=1,nsamples=5e3,X0=X0,dt=1e-4,fs=fs)
 tms <- X$time
 X <- X$Market
-par(mfrow=c(1,1))
-plot(rowSums(X),type='l',main='Market Size')
+par(mfrow=c(2,2))
+stackpoly(X,stack=T,main='Market Dynamics')
 R <- X/rowSums(X)
+stackpoly(R,stack=T,main='Relative Abundances')
 ms <- colMeans(X) 
 vs <- apply(X,MARGIN=2,var)
-model <- glm(log(vs)~log(ms)-1)
-model$coefficients
+model <- glm(log(vs)~log(ms))
+model$coefficients[2]
 prediction <- exp(predict(model))
 
-par(mfrow=c(1,2))
 plot(ms,vs,xlab='mean',ylab='variance',main='Variance Scaling of VSM',log='xy')
 lines(ms,prediction,lwd=2,col='blue')
+legend(min(ms),.3*max(vs),legend=paste('slope=',substr(toString(model$coefficients[2]),1,4),sep=''),col='blue',lty=1,lwd=2)
 
 ### Finally, let's perform a neutral test
-Pvals <- CVTest(1000,R)
-plot(ecdf(Pvals),main='Washburne Test',xlim=c(0,1),ylim=c(0,1))
+Pvals <- CVTest(500,R)
+plot(ecdf(Pvals),main='CVT-Neutrality Test',xlim=c(0,1),ylim=c(0,1))
 lines(c(0,1),c(0,1),lwd=2,col='red')
+ksP <- ks.test(Pvals,runif(length(Pvals)))$p.value
+ksP <- round(1000*ksP)/1000
+legend(0,.9,legend=c('Neut. Expectation',paste('P=',toString(ksP))),lty=c(NA,1),col=c(NA,'red'),lwd=c(NA,2))
 }
 

@@ -54,7 +54,7 @@
 #' lines(c(0,1),c(0,1),lwd=2,col='red')
 #' ksP <- ks.test(Pvals,runif(length(Pvals)))$p.value
 #' ksP <- round(1000*ksP)/1000
-#' legend(0,.9,legend=c('Neut. Expectation',paste('P=',toString(ksP))),lty=c(NA,1),col=c(NA,'red'),lwd=c(NA,2))
+#' legend(0,.9,legend=c('Neut. Expectation',paste('P=',toString(ksP))),lty=c(1,NA),col=c('red',NA),lwd=c(2,NA))
 vsm <- function(n=2,delta=NULL,lambda=NULL,rho=NULL,fs=NULL,dt=1e-5,Tmax=1,X0=NULL,tol=1e-16,nsamples=1000){
   
   if (is.null(lambda)==F){

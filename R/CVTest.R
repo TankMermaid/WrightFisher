@@ -16,10 +16,10 @@
 #' set.seed(2)
 #' 
 #' #this may take ~20-30 seconds
-#' wfp <- WFP(nSpecies=15,lambda=25)
+#' X <- wfp(nSpecies=15,lambda=25)
 #' 
-#' t <- wfp[[1]]
-#' R <- wfp[[2]]
+#' t <- X$time
+#' R <- X$Community
 #' 
 #' par(mfrow=c(1,3))
 #' stackpoly(R,stack=T,main='Community Dynamics',xlab='time',ylab='Abundance')
@@ -79,8 +79,7 @@ CVTest <- function(ntests,R,regress='f',formula=NULL,varformula=NULL,tm=NULL,...
       
       dataset=model.frame(formula,environment())
       model <- lm(formula,dataset)
-      # p[nn] <- bptest(model,varformula)$p.value
-      p[nn] <- bptest(model,varformula,...)$p.value
+      p[nn] <- lmtest::bptest(model,varformula,...)$p.value
       DF <- model$residuals^2
       b[[nn]] <- glm(varformula)$coefficients
       
@@ -90,8 +89,7 @@ CVTest <- function(ntests,R,regress='f',formula=NULL,varformula=NULL,tm=NULL,...
       
       dataset=model.frame(formula,environment())
       model <- lm(formula,dataset)
-      # p[nn] <- bptest(model,varformula)$p.value
-      p[nn] <- bptest(model,varformula,...)$p.value
+      p[nn] <- lmtest::bptest(model,varformula,...)$p.value
       b[[nn]] <- glm(varformula)$coefficients
     }
     

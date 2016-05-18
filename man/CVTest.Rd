@@ -33,10 +33,10 @@ library(WrightFisher)
 set.seed(2)
 
 #this may take ~20-30 seconds
-wfp <- WFP(nSpecies=15,lambda=25)
+X <- wfp(nSpecies=15,lambda=25)
 
-t <- wfp[[1]]
-R <- wfp[[2]]
+t <- X$time
+R <- X$Community
 
 par(mfrow=c(1,3))
 stackpoly(R,stack=T,main='Community Dynamics',xlab='time',ylab='Abundance')

@@ -6,7 +6,8 @@ Description: Simulate Wright-Fisher Process and volatility-stabilized market mod
 Depends:
     R (>= 3.2.2),
     lmtest (>= 0.9.34),
-    parallel (>= 3.2.2)
+    parallel (>= 3.2.2),
+    kolmim (>= 1.0)
 License: What license is it under?
 LazyData: true
 RoxygenNote: 5.0.1

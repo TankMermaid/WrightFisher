@@ -4,11 +4,11 @@
 \alias{vsm}
 \title{Simulate volatility-stabilized market model}
 \usage{
-vsm(n = 2, delta = NULL, lambda = NULL, rho = NULL, fs = NULL,
+vsm(nspecies = 2, delta = NULL, lambda = NULL, rho = NULL, fs = NULL,
   dt = 1e-05, Tmax = 1, X0 = NULL, tol = 1e-16, nsamples = 1000)
 }
 \arguments{
-\item{n}{Number of companies in market}
+\item{nspecies}{Number of companies in market}
 
 \item{delta}{Growth rate of market}
 
@@ -20,7 +20,7 @@ vsm(n = 2, delta = NULL, lambda = NULL, rho = NULL, fs = NULL,
 
 \item{Tmax}{Time window of numerical integration [0,Tmax]}
 
-\item{X0}{initial community size, default is rlnorm(n)}
+\item{X0}{initial community size, default is rlnorm(nspecies)}
 
 \item{tol}{Tolerance - reflecting wall close to zero to prevent negative values}
 }
@@ -44,12 +44,12 @@ stackpoly(R,stack=T,main='Market Shares')
 
 
 ### now let's see how the variance scales with the mean
-n=50
+nspecies=50
 lambda=1
 fs <- function(S) S
 X0 <- rlnorm(50)
 #the step below takes ~10s
-X <- vsm(n,lambda=lambda,Tmax=1,nsamples=5e3,X0=X0,dt=1e-4,fs=fs)
+X <- vsm(nspecies,lambda=lambda,Tmax=1,nsamples=5e3,X0=X0,dt=1e-4,fs=fs)
 tms <- X$time
 X <- X$Market
 par(mfrow=c(2,2))
@@ -72,6 +72,6 @@ plot(ecdf(Pvals),main='CVT-Neutrality Test',xlim=c(0,1),ylim=c(0,1))
 lines(c(0,1),c(0,1),lwd=2,col='red')
 ksP <- ks.test(Pvals,runif(length(Pvals)))$p.value
 ksP <- round(1000*ksP)/1000
-legend(0,.9,legend=c('Neut. Expectation',paste('P=',toString(ksP))),lty=c(NA,1),col=c(NA,'red'),lwd=c(NA,2))
+legend(0,.9,legend=c('Neut. Expectation',paste('P=',toString(ksP))),lty=c(1,NA),col=c('red',NA),lwd=c(2,NA))
 }
 

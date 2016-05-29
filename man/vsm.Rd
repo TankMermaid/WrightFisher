@@ -34,7 +34,7 @@ Simulate volatility-stabilized market model
 library(plotrix)
 set.seed(1)
 X0=rmultinom(1,size=200,prob=rep(1,5))
-X <- vsm(5,Tmax=1,nsamples=5e3,dt=1e-4,X0=X0)
+X <- vsm(nspecies=5,Tmax=1,nsamples=5e3,dt=1e-4,X0=X0)
 tms <- X$time
 X <- X$Market
 R <- X/rowSums(X)
@@ -67,11 +67,15 @@ lines(ms,prediction,lwd=2,col='blue')
 legend(min(ms),.3*max(vs),legend=paste('slope=',substr(toString(model$coefficients[2]),1,4),sep=''),col='blue',lty=1,lwd=2)
 
 ### Finally, let's perform a neutral test
-Pvals <- CVTest(500,R)
+NeutralCovTest(R,standard=F,ncores=3)
+
+Pvals <- CVTest(100,R)
 plot(ecdf(Pvals),main='CVT-Neutrality Test',xlim=c(0,1),ylim=c(0,1))
 lines(c(0,1),c(0,1),lwd=2,col='red')
-ksP <- ks.test(Pvals,runif(length(Pvals)))$p.value
+ksP <- NeutralCovTest(R,ntests=100)
 ksP <- round(1000*ksP)/1000
 legend(0,.9,legend=c('Neut. Expectation',paste('P=',toString(ksP))),lty=c(1,NA),col=c('red',NA),lwd=c(2,NA))
+
+
 }
 

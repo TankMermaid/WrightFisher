@@ -9,6 +9,7 @@
 #' @param formula Formula for regression of drift. Default DF~f+I(f^2)
 #' @param varformula Formula for regression of residuals in Breush-Pagan test. Default DF~f+I(f^2)
 #' @param standard Logical indicating whether to use a standard, reproducible choice of CVTs by setting seed within NeutralCovTest
+#' @param method String, either "Kolmogorov" or "logitnorm", for approximation of KS-statistic from P-value distribution of CVTests against uniform. Default is logitnorm.
 #' @param ... optional input arguments for bptest
 #' @examples
 #' library(WrightFisher)
@@ -35,15 +36,16 @@
 #' # cores, the parallelized version will be run for a speed-up.  
 #'  
 #' reps <- 20
+#' nspecies=300
 #' Pvals_vsm <- rep(NA,reps)
 #' Pvals_gbm <- rep(NA,reps)
-#' parallelize=F
+#' parallelize=T
 #' 
 #' for (nn in 1:reps){
 #' 
 #' ## Simulating Communities
-#' R <- vsm(nspecies=12,lambda=25,dt=1e-4,Tmax=1,nsamples=125)$Shares
-#' R2 <- gbmMR(12,Tmax=1,nsamples=125,sigma=4,mu=15)$Shares
+#' R <- vsm(nspecies=nspecies,lambda=25,dt=1e-4,Tmax=1,nsamples=125)$Shares
+#' R2 <- gbmMR(nspecies=nspecies,Tmax=1,nsamples=125,sigma=4,mu=15)$Shares
 #' 
 #' ## Neutrality Testing
 #' if (detectCores()>=3 && parallelize==T){
@@ -66,8 +68,9 @@
 #' legend(.6,.4,legend=c('Simulations','Uniform'),pch=c(16,NA),lwd=c(1,2),col=c('black','blue'))
 
 
-NeutralCovTest <- function(R,tm=NULL,ntests=NULL,regress='f',ncores=NULL,formula=DF~f+I(f^2),varformula=NULL,standard=T,...){
+NeutralCovTest <- function(R,tm=NULL,ntests=NULL,regress='f',ncores=NULL,formula=DF~f+I(f^2),varformula=NULL,standard=T,method='logitnorm',...){
   
+  if (!(method %in% c('Kolmogorov','logitnorm'))){stop('unknown input method. Must be either "Kolmogorov" or "logitnorm"')}
   
   # Pull out
   S <- dim(R)[2]
@@ -114,13 +117,21 @@ NeutralCovTest <- function(R,tm=NULL,ntests=NULL,regress='f',ncores=NULL,formula
   }
   
   ntests <- length(Pvals)
-  D <- suppressWarnings(ks.test(Pvals,runif(1e5))$statistic)
+  D <- suppressWarnings(ks.test(Pvals,'punif')$statistic)
   
-  data('WashburneKSn')
-  Q <- predict(WashburneKSn,newdata=data.frame('f'=ntests,'s'=S))
-  nstar_est <- ntests/(1+exp(-Q))
-  P <- 1-kolmim::pkolmim(D,nstar_est)
-  
+  if (method=='Kolmogorov'){
+    data('WashburneKSn')
+    Q <- predict(WashburneKSn,newdata=data.frame('f'=ntests,'s'=S))
+    nstar_est <- ntests/(1+exp(-Q))
+    P <- 1-kolmim::pkolmim(D,nstar_est)
+  } else {
+    data("gList")
+    mu_est <- predict(gList$gMu,newdata=data.frame('f'=ntests,'s'=S))
+    sigma_est <- predict(gList$gSigma,newdata=data.frame('f'=ntests,'s'=S,'t'=m))
+    
+    P <- 1-logitnorm::plogitnorm(D,mu=mu_est,sigma=sigma_est)
+  }
+  names(P) <- 'P value'
   
   return(P)
 }

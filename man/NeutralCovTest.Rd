@@ -6,7 +6,7 @@
 \usage{
 NeutralCovTest(R, tm = NULL, ntests = NULL, regress = "f",
   ncores = NULL, formula = DF ~ f + I(f^2), varformula = NULL,
-  standard = T, ...)
+  standard = T, method = "logitnorm", ...)
 }
 \arguments{
 \item{R}{Compositional matrix whose columns are species and whose rows are timepoints}
@@ -24,6 +24,8 @@ NeutralCovTest(R, tm = NULL, ntests = NULL, regress = "f",
 \item{varformula}{Formula for regression of residuals in Breush-Pagan test. Default DF~f+I(f^2)}
 
 \item{standard}{Logical indicating whether to use a standard, reproducible choice of CVTs by setting seed within NeutralCovTest}
+
+\item{method}{String, either "Kolmogorov" or "logitnorm", for approximation of KS-statistic from P-value distribution of CVTests against uniform. Default is logitnorm.}
 
 \item{...}{optional input arguments for bptest}
 }
@@ -55,22 +57,23 @@ P_gbm
 # cores, the parallelized version will be run for a speed-up.  
  
 reps <- 20
+nspecies=25
 Pvals_vsm <- rep(NA,reps)
 Pvals_gbm <- rep(NA,reps)
-parallelize=F
+parallelize=T
 
 for (nn in 1:reps){
 
 ## Simulating Communities
-R <- vsm(nspecies=12,lambda=25,dt=1e-4,Tmax=1,nsamples=125)$Shares
-R2 <- gbmMR(12,Tmax=1,nsamples=125,sigma=4,mu=15)$Shares
+R <- vsm(nspecies=nspecies,lambda=25,dt=1e-4,Tmax=1,nsamples=125)$Shares
+R2 <- gbmMR(nspecies=nspecies,Tmax=1,nsamples=125,sigma=4,mu=15)$Shares
 
 ## Neutrality Testing
 if (detectCores()>=3 && parallelize==T){
 # For species-rich datasets, NeutralCovTest may take a while and can be sped-up through paralellization by inputting ncores
  ncores=detectCores()-1
- Pvals_vsm[nn] <- NeutralCovTest(R,ncores=ncores)
- Pvals_gbm[nn] <- NeutralCovTest(R2,ncores=ncores)
+ Pvals_vsm[nn] <- NeutralCovTest(R,ncores=ncores,method='Kolmogorov')
+ Pvals_gbm[nn] <- NeutralCovTest(R2,ncores=ncores,method='Kolmogorov')
 } else {
  Pvals_vsm[nn] <- NeutralCovTest(R)
  Pvals_gbm[nn] <- NeutralCovTest(R2)

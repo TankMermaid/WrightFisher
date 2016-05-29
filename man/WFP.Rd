@@ -4,8 +4,8 @@
 \alias{wfp}
 \title{Simulate Wright-Fisher Process}
 \usage{
-wfp(nspecies = 3, rho = NULL, lambda = 15, X0 = rho, dt = 1e-05,
-  Tmax = 1, nsamples = 1000, method = "VSM", tol = 1e-16)
+wfp(nspecies, rho = NULL, lambda = 15, X0 = rho, dt = 1e-05, Tmax = 1,
+  nsamples = 1000, method = "VSM", tol = 1e-16)
 }
 \arguments{
 \item{nspecies}{One way to parameterize WFP by number of species. \code{rho} will be \code{rep(1/nspecies,nspecies)}}
@@ -33,12 +33,16 @@ Outputs a two-element list. The first element is the time vector for the time of
 Simulate Wright-Fisher Process
 }
 \examples{
+library(WrightFisher)
 library(plotrix)
-X <- wfp(rho=rep(.2,5),dt=1e-6,Tmax=0.25)
+
+set.seed(1)
+X <- wfp(nspecies=5,rho=rep(.2,5),dt=1e-3,Tmax=1)
 
 time <- X$time
 X <- X$Community
-stackpoly(X,stack=T)
+par(mfrow=c(1,1))
+stackpoly(X,stack=T,xlab='time',ylab='Relative Abundance',main='Wright-Fisher Process Trajectory')
 }
 \references{
 Washburne, Alex (2015) "Competition and Coexistence in an Unpredictable World". https://www.academia.edu/15517160/PhD_Thesis_-_Competition_and_Coexistence_in_an_Unpredictable_World

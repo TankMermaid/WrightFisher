@@ -36,7 +36,7 @@
 #' # cores, the parallelized version will be run for a speed-up.  
 #'  
 #' reps <- 20
-#' nspecies=300
+#' nspecies=50
 #' Pvals_vsm <- rep(NA,reps)
 #' Pvals_gbm <- rep(NA,reps)
 #' parallelize=T
@@ -70,7 +70,7 @@
 
 NeutralCovTest <- function(R,tm=NULL,ntests=NULL,regress='f',ncores=NULL,formula=DF~f+I(f^2),varformula=NULL,standard=T,method='logitnorm',...){
   
-  if (!(method %in% c('Kolmogorov','logitnorm'))){stop('unknown input method. Must be either "Kolmogorov" or "logitnorm"')}
+  if (!(method %in% c('Kolmogorov','logitnorm','uncorrected'))){stop('unknown input method. Must be either "Kolmogorov", "logitnorm", or "uncorrected".')}
   
   # Pull out
   S <- dim(R)[2]
@@ -81,7 +81,7 @@ NeutralCovTest <- function(R,tm=NULL,ntests=NULL,regress='f',ncores=NULL,formula
   upperbound <- bounds$upperbound
   
   if (is.null(ntests)){
-    ntests <- min(16000,floor((upperbound*S)^3))
+    ntests <- min(S,floor((upperbound*S)^3))
   } else {
     if (ntests>(upperbound*S)^3){
       warning('ntests input is large relative to number of species, leading to high false-positive rates for P<0.05')
@@ -112,7 +112,7 @@ NeutralCovTest <- function(R,tm=NULL,ntests=NULL,regress='f',ncores=NULL,formula
     
     Pvals <- unlist(parallel::parLapply(cl,X=as.list(rep(testsEach,ncores)),fun = CVTest,R=R,regress=regress,formula=formula,varformula=varformula))
   
-    stopCluster(cl)
+    parallel::stopCluster(cl)
     gc()
   }
   
@@ -124,12 +124,17 @@ NeutralCovTest <- function(R,tm=NULL,ntests=NULL,regress='f',ncores=NULL,formula
     Q <- predict(WashburneKSn,newdata=data.frame('f'=ntests,'s'=S))
     nstar_est <- ntests/(1+exp(-Q))
     P <- 1-kolmim::pkolmim(D,nstar_est)
-  } else {
+  }
+  
+  if (method=='logitnorm'){
     data("gList")
     mu_est <- predict(gList$gMu,newdata=data.frame('f'=ntests,'s'=S))
     sigma_est <- predict(gList$gSigma,newdata=data.frame('f'=ntests,'s'=S,'t'=m))
-    
     P <- 1-logitnorm::plogitnorm(D,mu=mu_est,sigma=sigma_est)
+  }
+  
+  if (method=='uncorrected'){
+    P <- ks.test(Pvals,'punif')$p.value
   }
   names(P) <- 'P value'
   

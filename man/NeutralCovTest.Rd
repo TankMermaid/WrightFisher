@@ -57,7 +57,7 @@ P_gbm
 # cores, the parallelized version will be run for a speed-up.  
  
 reps <- 20
-nspecies=25
+nspecies=50
 Pvals_vsm <- rep(NA,reps)
 Pvals_gbm <- rep(NA,reps)
 parallelize=T
@@ -72,8 +72,8 @@ R2 <- gbmMR(nspecies=nspecies,Tmax=1,nsamples=125,sigma=4,mu=15)$Shares
 if (detectCores()>=3 && parallelize==T){
 # For species-rich datasets, NeutralCovTest may take a while and can be sped-up through paralellization by inputting ncores
  ncores=detectCores()-1
- Pvals_vsm[nn] <- NeutralCovTest(R,ncores=ncores,method='Kolmogorov')
- Pvals_gbm[nn] <- NeutralCovTest(R2,ncores=ncores,method='Kolmogorov')
+ Pvals_vsm[nn] <- NeutralCovTest(R,ncores=ncores)
+ Pvals_gbm[nn] <- NeutralCovTest(R2,ncores=ncores)
 } else {
  Pvals_vsm[nn] <- NeutralCovTest(R)
  Pvals_gbm[nn] <- NeutralCovTest(R2)

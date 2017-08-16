@@ -1,4 +1,4 @@
-#' Mean-Reverting geometric brownian motion
+#' Ornstein-Uhlenbeck process
 #' 
 #' @export
 #' @param nspecies number of companies to simulate
@@ -12,11 +12,11 @@
 #' library(WrightFisher)
 #' library(plotrix)
 #' 
-#' x <- gbmMR(10)
+#' x <- or(10)
 #' par(mfrow=c(1,2))
 #' stackpoly(x$Market,stack=T,main='Market Dynamics')
 #' stackpoly(x$Shares,stack=T,main='Market Share Dynamics')
-gbmMR <- function(nspecies,mu=1,sigma=1,rho=0,Tmax=1,X0=NULL,nsamples=1000,dt=NULL){
+or <- function(nspecies,mu=1,sigma=1,rho=0,Tmax=1,X0=NULL,nsamples=1000,dt=NULL){
   
   #simulates brownian motions & then exponentiates
   
@@ -41,7 +41,7 @@ gbmMR <- function(nspecies,mu=1,sigma=1,rho=0,Tmax=1,X0=NULL,nsamples=1000,dt=NU
     X[nn,] <- X[nn-1,]+mu*(rho-X[nn-1,])*dt+sigma*dw
   }
   
-  output <- list(times,exp(X),exp(X)/rowSums(exp(X)))
+  output <- list(times,X,X/rowSums(X))
   names(output) <- c('time','Market','Shares')
   return(output)
 }

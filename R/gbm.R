@@ -22,7 +22,11 @@ gbm <- function(nspecies,mu=1,sigma=1,Tmax=1,X0=NULL,nsamples=1000,dt=NULL){
   
   
   X <- matrix(0,nrow=nsamples,ncol=nspecies)
-  X[1,] <- rnorm(nspecies)
+  if (is.null(X0)){
+    X[1,] <- rnorm(nspecies)
+  } else {
+    X[1,] <- log(X0)
+  }
   x <- X[1,]
   
   if (is.null(dt)){

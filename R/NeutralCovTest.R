@@ -72,9 +72,9 @@ NeutralCovTest <- function(R,tm=NULL,ntests=NULL,regress='f',ncores=NULL,formula
   
   if (!(method %in% c('Kolmogorov','logitnorm','uncorrected'))){stop('unknown input method. Must be either "Kolmogorov", "logitnorm", or "uncorrected".')}
   
-  # Pull out
-  S <- dim(R)[2]
-  m <- dim(R)[1]
+  # Pull out #species and #timepoints
+  S <- ncol(R)
+  m <- nrow(R)
   
   
   data("bounds")

@@ -5,10 +5,10 @@
 #' @param n number of species
 #' @param m number of timepoints
 #' @return two member list, "f" - the CVT evaluated at all points in the input matrix - and "DF", the jumps in the CVT
-drawCVT <- function(R,n=dim(R)[2],m=dim(R)[1]){
+drawCVT <- function(R,n=ncol(R),m=nrow(R)){
   dum=T
   while(dum==T){
-    a <- sign(rnorm(n))
+    a <- matrix(sign(rnorm(n)),ncol=1)
     if (abs(sum(a)<n)){dum=F}
   }
   

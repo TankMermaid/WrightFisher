@@ -63,7 +63,7 @@ CVTest <- function(ntests,R,regress='f',formula=NULL,varformula=NULL,tm=NULL,...
   
   if (regress=='time'){
     if (is.null(tm)){
-      tm <- 1:dim(R)[1]
+      tm <- 1:nrow(R)
       DT <- diff(tm)
       tm <- tm[1:(length(tm)-1)]
     }
